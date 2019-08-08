@@ -1,15 +1,15 @@
 const config = require('config');
 
-let mongoUrl = "mongodb://";
+// let mongoUrl = "mongodb://";
 
-mongoUrl = mongoUrl + config.get("mongo.host") + ":" + config.get("mongo.port") + "/" + config.get("mongo.db");
+// mongoUrl = mongoUrl + config.get("mongo.host") + ":" + config.get("mongo.port") + "/" + config.get("mongo.db");
 
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 //connect mongo
-mongoose.connect(mongoUrl, { useNewUrlParser: true }, (err) => {
-    if (err) {
-        console.log('Can not connect to mongodb');
-    } else {
+// mongoose.connect(mongoUrl, { useNewUrlParser: true }, (err) => {
+//     if (err) {
+//         console.log('Can not connect to mongodb');
+//     } else {
         const cors = require('cors');
         const bodyParser = require('body-parser');
         const express = require('express');
@@ -26,8 +26,8 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true }, (err) => {
         app.listen(port, () => {
             console.log('App start listen', port);
         });
-    }
-});
+//     }
+// });
 
 
 

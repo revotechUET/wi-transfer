@@ -18,10 +18,11 @@ const config = require('config');
 
         app.use(bodyParser.urlencoded({ extended: false }));
         app.use(cors());
+        app.use(bodyParser.json());
 
         app.use('/curve', curveRouter);
 
-        let port = process.env.PORT || config.get("curveBasePath");
+        let port = process.env.PORT || config.get("port");
         
         app.listen(port, () => {
             console.log('App start listen', port);

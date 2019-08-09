@@ -29,6 +29,7 @@ router.post('/download', (req, res) => {
 
         transferFile.on('close', () => {
             console.log('download file successfully');
+            fs.unlink(outputName);
         });
         transferFile.on('error', (e) => {
             console.log(e.message);
@@ -40,24 +41,24 @@ router.post('/download', (req, res) => {
 
 });
 
-router.post('/upload', (req, res) => {
+// router.post('/upload', (req, res) => {
 
-});
+// });
 
-router.post('/get-status', (req, res) => {
-    let user = req.body.user;
-    // CurveStatus.find({user: user}, (err, rs)=>{
-    //     if (err) {
-    //         res.json(responseJSON(false, err.message, {}));
-    //     } else {
-    //         if (rs) {
-    //             res.json(responseJSON(true, "successfully", rs));
-    //         } else {
-    //             res.json(responseJSON(false, "No found", {}));
-    //         }
-    //     }
-    // });
-});
+// router.post('/get-status', (req, res) => {
+//     let user = req.body.user;
+//     // CurveStatus.find({user: user}, (err, rs)=>{
+//     //     if (err) {
+//     //         res.json(responseJSON(false, err.message, {}));
+//     //     } else {
+//     //         if (rs) {
+//     //             res.json(responseJSON(true, "successfully", rs));
+//     //         } else {
+//     //             res.json(responseJSON(false, "No found", {}));
+//     //         }
+//     //     }
+//     // });
+// });
 
 
 

@@ -21,12 +21,8 @@ router.post('/download', (req, res) => {
 
     let n = listFileCurve.length;
     for (let i = 0; i < n; i++) {
-        try {
-            let rsStream = fs.createReadStream(listFileCurve[i]);
-            archive.append(rsStream, { name: curveFiles[i] });
-        }  catch (e) {
-            console.log(e.message);
-        }
+        if (fs.existsSync(listFileCurve[i]))
+        archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
     }
 
     archive.on('finish', ()=>{

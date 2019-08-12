@@ -20,8 +20,12 @@ router.post('/download', (req, res) => {
     archive.pipe(output);
 
     let n = listFileCurve.length;
-    for (let i = 0; i < n; i++) {
-        archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
+    try {
+        for (let i = 0; i < n; i++) {
+            archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
+        }
+    } catch (e) {
+        console.log(e.message);
     }
 
     archive.on('finish', ()=>{
@@ -35,9 +39,8 @@ router.post('/download', (req, res) => {
             console.log(e.message);
         });
     });
-    
+        
     archive.finalize();
-
 
 });
 

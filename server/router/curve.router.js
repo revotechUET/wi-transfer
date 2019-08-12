@@ -9,6 +9,7 @@ const config = require('config');
 let curveBaseFolder = process.env.BACKEND_CURVE_BASE_PATH || config.curveBasePath;
 
 router.post('/download', (req, res) => {
+
     let curveFiles = req.body.curveFiles;
     let listFileCurve = curveFiles.map((e) => curveBaseFolder + e);
     let outputName = __dirname + '/curves_' + Date.now() + '_' + Math.floor(Math.random() * 10000) + '.zip';
@@ -17,27 +18,32 @@ router.post('/download', (req, res) => {
         zlib: { level: 9 } // Sets the compression level.
     });
 
-    archive.pipe(output);
-
     let n = listFileCurve.length;
-    for (let i = 0; i < n; i++) {
-        if (fs.existsSync(listFileCurve[i]))
-        archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
+
+    try {
+        archive.pipe(output);
+
+        for (let i = 0; i < n; i++) {
+            if (fs.existsSync(listFileCurve[i]))
+                archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
+        }
+
+        archive.on('finish', () => {
+            let transferFile = fs.createReadStream(outputName).pipe(res);
+
+            transferFile.on('close', () => {
+                console.log('download file successfully');
+                fs.unlink(outputName);
+            });
+            transferFile.on('error', (e) => {
+                console.log(e.message);
+            });
+        });
+
+        archive.finalize();
+    } catch (e) {
+        console.log("Error in route download:", e.message);
     }
-
-    archive.on('finish', ()=>{
-        let transferFile = fs.createReadStream(outputName).pipe(res);
-
-        transferFile.on('close', () => {
-            console.log('download file successfully');
-            fs.unlink(outputName);
-        });
-        transferFile.on('error', (e) => {
-            console.log(e.message);
-        });
-    });
-        
-    archive.finalize();
 
 });
 

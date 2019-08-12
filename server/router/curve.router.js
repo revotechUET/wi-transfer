@@ -25,6 +25,7 @@ router.post('/download', (req, res) => {
         try {
             archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
         }  catch (e) {
+            console.log('error happened');
             console.log(e.message);
         }
     }

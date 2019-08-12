@@ -40,7 +40,9 @@ router.post('/download', (req, res) => {
             });
         });
 
-        archive.finalize();
+        archive.finalize().catch((err)=>{
+            console.log('Zip error:', err.message);
+        });
     } catch (e) {
         console.log("Error in route download:", e.message);
     }

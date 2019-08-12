@@ -9,7 +9,6 @@ const config = require('config');
 let curveBaseFolder = process.env.BACKEND_CURVE_BASE_PATH || config.curveBasePath;
 
 router.post('/download', (req, res) => {
-    console.log('start route...');
     let curveFiles = req.body.curveFiles;
     let listFileCurve = curveFiles.map((e) => curveBaseFolder + e);
     let outputName = __dirname + '/curves_' + Date.now() + '_' + Math.floor(Math.random() * 10000) + '.zip';
@@ -23,9 +22,9 @@ router.post('/download', (req, res) => {
     let n = listFileCurve.length;
     for (let i = 0; i < n; i++) {
         try {
-            archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
+            let rsStream = fs.createReadStream(listFileCurve[i]);
+            archive.append(rsStream, { name: curveFiles[i] });
         }  catch (e) {
-            console.log('error happened');
             console.log(e.message);
         }
     }

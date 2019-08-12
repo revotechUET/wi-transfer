@@ -9,6 +9,7 @@ const config = require('config');
 let curveBaseFolder = process.env.BACKEND_CURVE_BASE_PATH || config.curveBasePath;
 
 router.post('/download', (req, res) => {
+    console.log('start route...');
     let curveFiles = req.body.curveFiles;
     let listFileCurve = curveFiles.map((e) => curveBaseFolder + e);
     let outputName = __dirname + '/curves_' + Date.now() + '_' + Math.floor(Math.random() * 10000) + '.zip';

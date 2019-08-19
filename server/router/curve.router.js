@@ -5,6 +5,11 @@ const archiver = require('archiver');
 const fs = require('fs');
 const config = require('config');
 // let CurveStatus = require('./curve-status.model').model;
+let multer = require('multer');
+let upload = multer({
+    dest: 'uploads/'
+});
+
 
 let curveBaseFolder = process.env.BACKEND_CURVE_BASE_PATH || config.curveBasePath;
 
@@ -12,6 +17,7 @@ router.post('/download', (req, res) => {
 
     let curveFiles = req.body.curveFiles;
     let listFileCurve = curveFiles.map((e) => curveBaseFolder + e);
+
     let outputName = __dirname + '/curves_' + Date.now() + '_' + Math.floor(Math.random() * 100000) + '.zip';
 
     let n = listFileCurve.length;
@@ -40,7 +46,9 @@ router.post('/download', (req, res) => {
             });
         });
 
-        archive.finalize().catch((err)=>{
+        archive.finalize().then((res)=>{
+            console.log('Zip file successfully:', output);
+        }).catch((err)=>{
             console.log('Zip error:', err.message);
         });
     } catch (e) {
@@ -49,9 +57,10 @@ router.post('/download', (req, res) => {
 
 });
 
-// router.post('/upload', (req, res) => {
-
-// });
+router.post('/upload', upload.single('file'), (req, res) => {
+    console.log(req.file);
+    res.json(responseJSON(true, 'hell no', {}));
+});
 
 // router.post('/get-status', (req, res) => {
 //     let user = req.body.user;

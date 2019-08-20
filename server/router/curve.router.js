@@ -1,14 +1,23 @@
 const router = require('express').Router();
-const zlib = require('zlib');
 const responseJSON = require('./../json-response');
 const archiver = require('archiver');
 const fs = require('fs');
 const config = require('config');
+const unzip = require('unzip-stream');
+
 // let CurveStatus = require('./curve-status.model').model;
-let multer = require('multer');
-let upload = multer({
-    dest: 'uploads/'
+const multer = require('multer');
+
+let storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, 'uploads/');
+	},
+	filename: function (req, file, cb) {
+		cb(null, file.originalname);
+	}
 });
+
+let upload = multer({storage: storage});
 
 
 let curveBaseFolder = process.env.BACKEND_CURVE_BASE_PATH || config.curveBasePath;
@@ -21,45 +30,49 @@ router.post('/download', (req, res) => {
     let outputName = __dirname + '/curves_' + Date.now() + '_' + Math.floor(Math.random() * 100000) + '.zip';
 
     let n = listFileCurve.length;
+    
+    let output = fs.createWriteStream(outputName);
+    let archive = archiver('zip', {
+        zlib: { level: 9 } // Sets the compression level.
+    });
+    archive.pipe(output);
 
-    try {
-        let output = fs.createWriteStream(outputName);
-        let archive = archiver('zip', {
-            zlib: { level: 9 } // Sets the compression level.
-        });
-        archive.pipe(output);
-
-        for (let i = 0; i < n; i++) {
-            if (fs.existsSync(listFileCurve[i]))
-                archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
-        }
-
-        archive.on('finish', () => {
-            let transferFile = fs.createReadStream(outputName).pipe(res);
-
-            transferFile.on('close', () => {
-                console.log('download file successfully');
-                fs.unlink(outputName);
-            });
-            transferFile.on('error', (e) => {
-                console.log(e.message);
-            });
-        });
-
-        archive.finalize().then((res)=>{
-            console.log('Zip file successfully:', output);
-        }).catch((err)=>{
-            console.log('Zip error:', err.message);
-        });
-    } catch (e) {
-        console.log("Error in route download:", e.message);
+    for (let i = 0; i < n; i++) {
+        if (fs.existsSync(listFileCurve[i]))
+            archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
     }
+
+    archive.on('close', () => {
+        let transferFile = fs.createReadStream(outputName).pipe(res);
+
+        transferFile.on('close', () => {
+            console.log('download file successfully');
+            fs.unlinkSync(outputName);
+        });
+        transferFile.on('error', (e) => {
+            console.log(e.message);
+        });
+    });
+
+    archive.finalize().then((res)=>{
+        console.log('Zip file successfully:', output);
+    }).catch((err)=>{
+        console.log('Zip error:', err.message);
+    });
 
 });
 
-router.post('/upload', upload.single('file'), (req, res) => {
-    console.log(req.file);
-    res.json(responseJSON(true, 'hell no', {}));
+router.post('/upload', upload.single('curve'), (req, res) => {
+    let pathOfZipFile = req.file.path;
+    let unzipProcesss = fs.createReadStream(pathOfZipFile).pipe(unzip.Extract({ path: curveBaseFolder}));
+    unzipProcesss.on('error', (e)=>{
+        res.json(responseJSON(false, e.message, {}));
+        fs.unlinkSync(pathOfZipFile);
+    });
+    unzipProcesss.on('close', ()=>{
+        res.json(responseJSON(true, 'successfully', {}));
+        fs.unlinkSync(pathOfZipFile);
+    });
 });
 
 // router.post('/get-status', (req, res) => {

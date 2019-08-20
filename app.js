@@ -26,9 +26,9 @@ const curveRouter = require('./server/router/curve.router');
 app.get('/', (req, res) => {
 	res.json({name: "wi-curve-transfer", serverId: serverId, version: "1.0"});
 });
-app.use(bodyParser.urlencoded({extended: false}));
+// app.use(bodyParser.urlencoded({extended: false}));
 app.use(cors());
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
 app.use('/curve', curveRouter);
 

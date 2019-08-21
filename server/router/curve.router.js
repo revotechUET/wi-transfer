@@ -43,7 +43,7 @@ router.post('/download', (req, res) => {
             archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
     }
 
-    archive.on('finish', () => {
+    output.on('close', () => {
         let transferFile = fs.createReadStream(outputName).pipe(res);
 
         transferFile.on('close', () => {
@@ -52,11 +52,12 @@ router.post('/download', (req, res) => {
         });
         transferFile.on('error', (e) => {
             console.log(e.message);
+            fs.unlinkSync(outputName);
         });
     });
 
     archive.finalize().then((res)=>{
-        console.log('Zip file successfully:', output);
+        console.log('Zip file successfully:', output.path);
     }).catch((err)=>{
         console.log('Zip error:', err.message);
     });

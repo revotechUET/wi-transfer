@@ -64,3 +64,6 @@ typings/
 
 uploads/*
 !uploads/.gitkeep
+
+downloads/*
+!downloads/.gitkeep

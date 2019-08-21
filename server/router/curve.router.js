@@ -28,7 +28,7 @@ router.post('/download', (req, res) => {
     let curveFiles = req.body.curveFiles;
     let listFileCurve = curveFiles.map((e) => curveBaseFolder + e);
 
-    let outputName = __dirname + '/curves_' + Date.now() + '_' + Math.floor(Math.random() * 100000) + '.zip';
+    let outputName = '.downloads/curves_' + Date.now() + '_' + Math.floor(Math.random() * 100000) + '.zip';
 
     let n = listFileCurve.length;
     

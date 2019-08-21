@@ -16,7 +16,8 @@ const mongoose = require('mongoose');
 
 mongoose.connect(mongoUrl, { useNewUrlParser: true }, (err) => {
     if (err) {
-        console.log('Can not connect to mongodb');
+		console.log('Can not connect to mongodb');
+		process.exit(1);
     } else {
 		const cors = require('cors');
 		const bodyParser = require('body-parser');

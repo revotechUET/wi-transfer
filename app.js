@@ -14,6 +14,8 @@ mongoUrl = mongoUrl + config.get("mongo.host") + ":" + config.get("mongo.port") 
 
 const mongoose = require('mongoose');
 
+console.log(mongoUrl);
+
 mongoose.connect(mongoUrl, { useNewUrlParser: true }, (err) => {
     if (err) {
 		console.log('Can not connect to mongodb');

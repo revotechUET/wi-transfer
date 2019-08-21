@@ -7,6 +7,7 @@ const unzip = require('unzip-stream');
 
 // let CurveStatus = require('./curve-status.model').model;
 const multer = require('multer');
+const CurveStatus = require('./curve-status.model').model;
 
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -64,6 +65,7 @@ router.post('/download', (req, res) => {
 
 router.post('/upload', upload.single('curve'), (req, res) => {
     let pathOfZipFile = req.file.path;
+    let curveInfos = req.body.curveInfo;
     let unzipProcesss = fs.createReadStream(pathOfZipFile).pipe(unzip.Extract({ path: curveBaseFolder}));
     unzipProcesss.on('error', (e)=>{
         res.json(responseJSON(false, e.message, {}));
@@ -72,6 +74,16 @@ router.post('/upload', upload.single('curve'), (req, res) => {
     unzipProcesss.on('close', ()=>{
         res.json(responseJSON(true, 'successfully', {}));
         fs.unlinkSync(pathOfZipFile);
+
+        //update
+        for (let i = 0; i < curveInfos.length; i++) {
+            CurveStatus.findOneAndUpdate({path: curveInfos[i].path.toString()}, {updatedAt: new Date(curveInfos[i].updatedAt)}, (err, doc)=>{
+                if (err) {
+                    console.log(err);
+                }
+            });
+        }
+        
     });
 });
 

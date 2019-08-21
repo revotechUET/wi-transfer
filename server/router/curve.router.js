@@ -43,7 +43,7 @@ router.post('/download', (req, res) => {
             archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
     }
 
-    archive.on('close', () => {
+    archive.on('finish', () => {
         let transferFile = fs.createReadStream(outputName).pipe(res);
 
         transferFile.on('close', () => {

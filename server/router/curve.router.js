@@ -82,6 +82,19 @@ router.post('/upload', upload.single('curve'), (req, res) => {
                 if (err) {
                     console.log(err);
                 }
+                if (!doc) {
+                    // this is new one, create it
+                    let curveStt = new CurveStatus({
+                        path: curveInfos[i].path,
+                        updatedAt: date,
+                        user: curveInfos[i].user
+                    });
+                    curveStt.save((err)=>{
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
+                }
             });
         }
         

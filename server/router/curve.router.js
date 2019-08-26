@@ -67,6 +67,7 @@ router.post('/download', (req, res) => {
 router.post('/upload', upload.single('curve'), (req, res) => {
     let pathOfZipFile = req.file.path;
     let curveInfos = req.body.curveInfo;
+    console.log('curve upload:', curveInfos);
     let unzipProcesss = fs.createReadStream(pathOfZipFile).pipe(unzip.Extract({ path: curveBaseFolder}));
     unzipProcesss.on('error', (e)=>{
         res.json(responseJSON(false, e.message, {}));

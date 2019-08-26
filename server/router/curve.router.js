@@ -75,10 +75,9 @@ router.post('/upload', upload.single('curve'), (req, res) => {
     unzipProcesss.on('close', ()=>{
         res.json(responseJSON(true, 'successfully', {}));
         fs.unlinkSync(pathOfZipFile);
-
+        console.log('curve upload:', curveInfos);
         //update
         for (let i = 0; i < curveInfos.length; i++) {
-            console.log(curveInfos[i]);
             CurveStatus.findOneAndUpdate({path: curveInfos[i].path}, {updatedAt: new Date(curveInfos[i].updatedAt)}, (err, doc)=>{
                 if (err) {
                     console.log(err);

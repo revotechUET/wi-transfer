@@ -78,7 +78,7 @@ router.post('/upload', upload.single('curve'), (req, res) => {
 
         //update
         for (let i = 0; i < curveInfos.length; i++) {
-            CurveStatus.findOneAndUpdate({path: curveInfos[i].path.toString()}, {updatedAt: new Date(curveInfos[i].updatedAt)}, (err, doc)=>{
+            CurveStatus.findOneAndUpdate({path: curveInfos[i].path}, {updatedAt: new Date(curveInfos[i].updatedAt)}, (err, doc)=>{
                 if (err) {
                     console.log(err);
                 }

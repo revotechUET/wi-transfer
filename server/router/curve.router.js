@@ -66,8 +66,7 @@ router.post('/download', (req, res) => {
 
 router.post('/upload', upload.single('curve'), (req, res) => {
     let pathOfZipFile = req.file.path;
-    let curveInfos = req.body.curveInfo;
-    console.log('curve upload:', curveInfos);
+    let curveInfos = JSON.parse(req.body.curveInfo);
     let unzipProcesss = fs.createReadStream(pathOfZipFile).pipe(unzip.Extract({ path: curveBaseFolder}));
     unzipProcesss.on('error', (e)=>{
         res.json(responseJSON(false, e.message, {}));
@@ -76,10 +75,10 @@ router.post('/upload', upload.single('curve'), (req, res) => {
     unzipProcesss.on('close', ()=>{
         res.json(responseJSON(true, 'successfully', {}));
         fs.unlinkSync(pathOfZipFile);
-        console.log('curve upload:', curveInfos);
         //update
         for (let i = 0; i < curveInfos.length; i++) {
-            CurveStatus.findOneAndUpdate({path: curveInfos[i].path}, {updatedAt: new Date(curveInfos[i].updatedAt)}, (err, doc)=>{
+            let date = new Date(curveInfos[i].updatedAt);
+            CurveStatus.findOneAndUpdate({path: curveInfos[i].path}, {updatedAt: date}, (err, doc)=>{
                 if (err) {
                     console.log(err);
                 }

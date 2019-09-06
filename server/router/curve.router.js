@@ -46,13 +46,26 @@ router.post('/download', (req, res) => {
     output.on('close', () => {
         let transferFile = fs.createReadStream(outputName).pipe(res);
 
-        transferFile.on('close', () => {
+        transferFile.on('finish', () => {
             console.log('download file successfully');
-            fs.unlinkSync(outputName);
+            fs.unlink(outputName, (err)=>{
+                if (err) {
+                    console.log('delete file err:', err.message);
+                } else {
+                    console.log('delete file successfully:', outputName);
+                }
+            });
         });
+
         transferFile.on('error', (e) => {
             console.log(e.message);
-            fs.unlinkSync(outputName);
+            fs.unlink(outputName, (err) => {
+                if (err) {
+                    console.log('delete file err:', err.message);
+                } else {
+                    console.log('delete file successfully', outputName);
+                }
+            });
         });
     });
 
@@ -85,7 +98,6 @@ router.post('/upload', upload.single('curve'), (req, res) => {
                 console.log(doc);
                 if (!doc) {
                     // this is new one, create it
-                    console.log('this run');
                     let curveStt = new CurveStatus({
                         path: curveInfos[i].path,
                         updatedAt: date,
@@ -102,6 +114,51 @@ router.post('/upload', upload.single('curve'), (req, res) => {
         
     });
 });
+
+// router.get('/zip-download', (req,res)=>{
+
+//     let outputName = './downloads/file' + Date.now() + '.zip';
+    
+//     let output = fs.createWriteStream(outputName);
+//     let archive = archiver('zip', {
+//         zlib: { level: 9 } // Sets the compression level.
+//     });
+//     archive.pipe(output);
+
+//     archive.append(fs.createReadStream('./install-docker.pdf'), { name: 'install-docker.pdf' });
+//     archive.append(fs.createReadStream('./install-i2g.pdf'), { name: '/folder/install-i2g.pdf' });
+
+//     output.on('close', () => {
+//         let transferFile = fs.createReadStream(outputName).pipe(res);
+
+//         transferFile.on('finish', () => {
+//             console.log('download file successfully');
+//             fs.unlink(outputName, (err)=>{
+//                 if (err) {
+//                     console.log('delete file err:', err.message);
+//                 } else {
+//                     console.log('delete file successfully');
+//                 }
+//             });
+//         });
+//         transferFile.on('error', (e) => {
+//             console.log(e.message);
+//             fs.unlink(outputName, (err) => {
+//                 if (err) {
+//                     console.log('delete file err:', err.message);
+//                 } else {
+//                     console.log('delete file successfully');
+//                 }
+//             });
+//         });
+//     });
+
+//     archive.finalize().then((res)=>{
+//         console.log('Zip file successfully:', output.path);
+//     }).catch((err)=>{
+//         console.log('Zip error:', err.message);
+//     });
+// });
 
 // router.post('/get-status', (req, res) => {
 //     let user = req.body.user;

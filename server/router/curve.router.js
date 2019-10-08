@@ -26,7 +26,7 @@ let curveBaseFolder = process.env.BACKEND_CURVE_BASE_PATH || config.curveBasePat
 router.post('/download', (req, res) => {
     let curveFiles = req.body.curveFiles;
     let listFileCurve = curveFiles.map((e) => curveBaseFolder + e);
-    console.log(listFileCurve);
+    console.log('curves file:', listFileCurve);
 
     let outputName = './downloads/curves_' + Date.now() + '_' + Math.floor(Math.random() * 100000) + '.zip';
 

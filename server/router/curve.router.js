@@ -40,6 +40,7 @@ router.post('/download', (req, res) => {
 
     for (let i = 0; i < n; i++) {
         if (fs.existsSync(listFileCurve[i]))
+            console.log('exist:', listFileCurve[i]);
             archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
     }
 

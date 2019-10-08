@@ -24,9 +24,9 @@ let upload = multer({storage: storage});
 let curveBaseFolder = process.env.BACKEND_CURVE_BASE_PATH || config.curveBasePath;
 
 router.post('/download', (req, res) => {
-
     let curveFiles = req.body.curveFiles;
     let listFileCurve = curveFiles.map((e) => curveBaseFolder + e);
+    console.log(listFileCurve);
 
     let outputName = './downloads/curves_' + Date.now() + '_' + Math.floor(Math.random() * 100000) + '.zip';
 
@@ -40,7 +40,7 @@ router.post('/download', (req, res) => {
 
     for (let i = 0; i < n; i++) {
         if (fs.existsSync(listFileCurve[i]))
-            console.log('exist:', listFileCurve[i]);
+            //console.log('exist:', listFileCurve[i]);
             archive.append(fs.createReadStream(listFileCurve[i]), { name: curveFiles[i] });
     }
 
